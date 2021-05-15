@@ -1,17 +1,52 @@
 //2048 game
 
-// 1	Print the 4 x 4 board on each turn in the console and wait for user input. 
-// This will initially have two cells populated at random with a 2 or 4
-//2.	User will input 1, 2, 3, 4 for left, right, up and down movements
-let array = [   [2,null,null,null],
-                [2,2,2,2],
-                [null,null,null,4],
-                [null,2,4,2]];
+let array = [   [null,null,null,null],
+                [null,null,null,null],
+                [null,null,null,null],
+                [null,null,null,null]];
+
+const gameEndscore = 2048;
+
 function startBoard(){
-    // array[randomNumber(0,3)][randomNumber(0,3)] = 2/4;
     populateRandomDigitOnEmptySquare();
     populateRandomDigitOnEmptySquare();
-    console.log(JSON.stringify(array));
+    printBoard();
+    startGame();
+}
+
+function startGame(){
+    getInput((key)=>{
+        makeMove(key);
+        if(!checkForGameEnd()){
+            if(checkForEmptyField()){
+                populateRandomDigitOnEmptySquare();
+                printBoard()
+            } else {
+                //game has ended
+                printBoard();
+                console.log("Greate effort! Game has ended");
+                endProcess();
+            }
+        } else {
+            // game completed successfully
+            printBoard();
+            console.log("Congratulations!. You have succesfullly completed game");
+            endProcess();
+        }
+    }) 
+}
+
+function endProcess(){
+    process.exit();
+}
+
+function checkForGameEnd(){
+    for (const element of array) {
+        if(element.includes(gameEndscore)){
+            return true;
+        }
+    }
+    return false;
 }
 
 function populateRandomDigitOnEmptySquare(){
@@ -30,9 +65,9 @@ function populateRandomDigitOnEmptySquare(){
 
 function checkForEmptyField(){
     for (const element of array) {
-        console.log(element);
+        // console.log(element);
         for (const field of element) {
-            console.log(field);
+            // console.log(field);
             if(field == null){
                 return true;
             }
@@ -77,7 +112,6 @@ function moveRight(){
                 element[i] = null;
             }
         }
-        printBoard();
     } catch (error) {
         console.log(error);
         process.exit();
@@ -121,7 +155,6 @@ function moveLeft(){
                 element[i] = null;
             }
         }
-        printBoard()
     } catch (error) {
         console.log(error);
         process.exit();
@@ -164,7 +197,6 @@ function moveUp(){
                 array[i][l] = null;
             }  
         }
-        printBoard()
     } catch (error) {
         console.log(error);
         process.exit();
@@ -197,10 +229,6 @@ function moveDown(){
                     if(i!=k){
                         array[i][l] = null;
                     }
-                    // array[k-1][l] = array[j][l];
-                    // if(j!=k-1){
-                    //     array[j][l] = null;
-                    // }
                     k = k-1
                     i = j;
                     j = j-1;
@@ -210,9 +238,7 @@ function moveDown(){
                 array[k][l] = array[i][l]
                 array[i][l] = null;
             }
-            
         }
-        printBoard()
     } catch (error) {
         console.log(error);
         process.exit();
@@ -225,13 +251,20 @@ function printBoard(){
     })
 }
 
-const readline = require('readline');
-readline.emitKeypressEvents(process.stdin);
-process.stdin.setRawMode(true);
-process.stdin.on('keypress', (str, key) => {
-  if (key.ctrl && key.name === 'c') {
-    process.exit();
-  } else {
+function getInput(cb){
+    const readline = require('readline');
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+    process.stdin.on('keypress', (str, key) => {
+        if (key.ctrl && key.name === 'c') {
+            process.exit();
+        } else {
+            cb(key)
+        }
+    });
+}
+
+function makeMove(key){
     if(key.name == 1 || key.name == 'left'){
         console.log("move Left");
         moveLeft()
@@ -247,34 +280,10 @@ process.stdin.on('keypress', (str, key) => {
     } else {
         console.log("do nothing/ invalid input");
     }
-    // console.log(`You pressed the "${str}" key`);
-    // console.log();
-    // console.log(key);
-    // console.log();
-  }
-});
-
-// document.addEventListener('keydown', function(event) {
-//     if(event.keyCode == 37) {
-//         alert('Left was pressed');
-//     }
-//     else if(event.keyCode == 39) {
-//         alert('Right was pressed');
-//     }
-// });
-
-// function startGame(){
-//      array[randomNumber(0,3)][randomNumber(0,3)] = 2;
-//      console.log( JSON.stringify(array))
-
-// }
-
+}
 
 function randomNumber(min, max) {  
     return Math.round(Math.random() * (max - min) + min); 
 }
 
 startBoard();
-// for(i= 0 ;i<100;i++){
-    // console.log(randomNumber(0, 3));
-// }
