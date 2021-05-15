@@ -1,11 +1,12 @@
 //2048 game
+const Constant =  require("./constant")
 
 let array = [   [null,null,null,null],
                 [null,null,null,null],
                 [null,null,null,null],
                 [null,null,null,null]];
 
-const gameEndscore = 2048;
+const gameEndscore = Constant.endScore;
 
 function startBoard(){
     populateRandomDigitOnEmptySquare();
@@ -16,7 +17,11 @@ function startBoard(){
 
 function startGame(){
     getInput((key)=>{
-        makeMove(key);
+        let move = makeMove(key);
+        if(move == Constant.invalid){
+            printBoard()
+            return;
+        }
         if(!checkForGameEnd()){
             if(checkForEmptyField()){
                 populateRandomDigitOnEmptySquare();
@@ -114,7 +119,7 @@ function moveRight(){
         }
     } catch (error) {
         console.log(error);
-        process.exit();
+        endProcess();
     }
 }
 
@@ -157,7 +162,7 @@ function moveLeft(){
         }
     } catch (error) {
         console.log(error);
-        process.exit();
+        endProcess();
     }
 }
 
@@ -199,7 +204,7 @@ function moveUp(){
         }
     } catch (error) {
         console.log(error);
-        process.exit();
+        endProcess()
     }
 }
 
@@ -241,7 +246,7 @@ function moveDown(){
         }
     } catch (error) {
         console.log(error);
-        process.exit();
+        endProcess();
     }
 }
 
@@ -279,6 +284,7 @@ function makeMove(key){
         moveDown();
     } else {
         console.log("do nothing/ invalid input");
+        return Constant.invalid;
     }
 }
 
